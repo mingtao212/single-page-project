@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百度统计表单</title>
+    <!-- 百度统计跟踪代码 -->
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?e9ad33ccfd1fb9a475388ae06128186b";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        button,
+        select {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 0;
+            /* 优化极端窄屏适配 */
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>百度统计表单</h1>
+    </header>
+    <main>
+        <div class="form-container">
+            <h2>用户反馈表单</h2>
+            <p>请填写以下信息并提交。</p>
+            <form id="feedbackForm" onsubmit="handleFormSubmit(event)">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" placeholder="请输入您的姓名" required aria-label="用户姓名"
+                    aria-describedby="nameError">
+                <span class="error" id="nameError"></span>
+
+                <label for="email">邮箱：</label>
+                <input type="email" id="email" name="email" placeholder="请输入您的邮箱" required aria-label="用户邮箱"
+                    aria-describedby="emailError">
+                <span class="error" id="emailError"></span>
+
+                <label for="feedback">反馈内容：</label>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="请输入您的意见或建议" required aria-label="反馈内容"
+                    aria-describedby="feedbackError"></textarea>
+                <span class="error" id="feedbackError"></span>
+
+                <label for="rating">满意度评分：</label>
+                <select id="rating" name="rating" required aria-label="满意度评分" aria-describedby="ratingError">
+                    <option value="" disabled selected>请选择评分</option>
+                    <option value="1">1 - 很不满意</option>
+                    <option value="2">2 - 不满意</option>
+                    <option value="3">3 - 一般</option>
+                    <option value="4">4 - 满意</option>
+                    <option value="5">5 - 非常满意</option>
+                </select>
+                <span class="error" id="ratingError"></span>
+
+                <button type="submit" id="submitButton">提交反馈</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 百度统计教学演示</p> <!-- 修正版权年份 -->
+    </footer>
+    <script>
+        // 优化后的表单提交处理函数（语义化命名）
+        function handleFormSubmit(event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
+            // 获取表单字段值
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const feedback = document.getElementById('feedback').value.trim();
+            const rating = document.getElementById('rating').value;
+
+            // 清空错误提示
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('feedbackError').textContent = '';
+            document.getElementById('ratingError').textContent = '';
+
+            // 验证表单字段
+            let isValid = true;
+            // 姓名验证
+            if (!name) {
+                document.getElementById('nameError').textContent = '请输入您的姓名';
+                isValid = false;
+                _hmt.push(['_trackEvent', 'Form Error', 'Name Field Empty']);
+            }
+            // 邮箱验证（正则优化，支持标准邮箱格式）
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                document.getElementById('emailError').textContent = '请输入有效的邮箱地址（如：example@xxx.com）';
+                isValid = false;
+                _hmt.push(['_trackEvent', 'Form Error', 'Invalid Email']);
+            }
+            // 反馈内容验证
+            if (!feedback) {
+                document.getElementById('feedbackError').textContent = '请输入您的反馈内容';
+                isValid = false;
+                _hmt.push(['_trackEvent', 'Form Error', 'Feedback Field Empty']);
+            }
+            // 评分验证
+            if (!rating) {
+                document.getElementById('ratingError').textContent = '请选择满意度评分';
+                isValid = false;
+                _hmt.push(['_trackEvent', 'Form Error', 'Rating Not Selected']);
+            }
+
+            // 如果验证通过，跳转到感谢页面（修复路径错误）
+            if (isValid) {
+                const submitBtn = document.getElementById('submitButton');
+                submitBtn.disabled = true; // 禁用按钮防止重复提交
+                submitBtn.textContent = '提交中...'; // 显示提交中状态
+                _hmt.push(['_trackEvent', 'Form Submission', 'Submit Feedback']);
+                window.location.href = "thanks.html"; // 修正为正确的感谢页面路径
+            }
+        }
+
+        // 字段失去焦点时触发验证（优化用户体验）
+        function validateFieldOnBlur(fieldId, errorId, validator) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            field.addEventListener('blur', () => {
+                const value = field.value.trim();
+                error.textContent = validator(value) ? '' : error.dataset.errorMsg;
+            });
+        }
+
+        // 初始化字段失焦验证
+        document.addEventListener('DOMContentLoaded', () => {
+            // 姓名失焦验证
+            validateFieldOnBlur('name', 'nameError', (value) => !!value);
+            document.getElementById('nameError').dataset.errorMsg = '请输入您的姓名';
+
+            // 邮箱失焦验证
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            validateFieldOnBlur('email', 'emailError', (value) => emailRegex.test(value));
+            document.getElementById('emailError').dataset.errorMsg = '请输入有效的邮箱地址（如：example@xxx.com）';
+
+            // 反馈内容失焦验证
+            validateFieldOnBlur('feedback', 'feedbackError', (value) => !!value);
+            document.getElementById('feedbackError').dataset.errorMsg = '请输入您的反馈内容';
+
+            // 评分失焦验证
+            validateFieldOnBlur('rating', 'ratingError', (value) => !!value);
+            document.getElementById('ratingError').dataset.errorMsg = '请选择满意度评分';
+
+            // 表单交互埋点（仅保留字段聚焦埋点，移除冗余的按钮点击埋点）
+            document.getElementById('name').addEventListener('focus', () => {
+                _hmt.push(['_trackEvent', 'Form Interaction', 'Name Field Focus']);
+            });
+            document.getElementById('email').addEventListener('focus', () => {
+                _hmt.push(['_trackEvent', 'Form Interaction', 'Email Field Focus']);
+            });
+            document.getElementById('feedback').addEventListener('focus', () => {
+                _hmt.push(['_trackEvent', 'Form Interaction', 'Feedback Field Focus']);
+            });
+            document.getElementById('rating').addEventListener('focus', () => {
+                _hmt.push(['_trackEvent', 'Form Interaction', 'Rating Field Focus']);
+            });
+        });
+    </script>
+</body>
+
+</html>
